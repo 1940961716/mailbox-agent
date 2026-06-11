@@ -1,0 +1,11 @@
+{
+  "name": "mailbox-agent-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "python ../backend/run.py"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
+

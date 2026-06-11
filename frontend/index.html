@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>智能邮箱 Agent 工作台</title>
+    <link rel="stylesheet" href="/static/styles.css?v=20260611-layout" />
+  </head>
+  <body>
+    <div class="mail-app">
+      <aside class="mail-sidebar">
+        <div class="brand">
+          <span class="brand-mark">AI</span>
+          <div>
+            <h1>智能邮箱 Agent</h1>
+            <p>从邮件生成 Todo、草稿和附件分析</p>
+          </div>
+        </div>
+
+        <nav class="app-nav">
+          <button id="mailViewBtn" class="nav-btn active">邮箱工作台</button>
+          <button id="todoViewBtn" class="nav-btn">Todo 总览</button>
+        </nav>
+
+        <section id="syncBox" class="sync-box login-box">
+          <h2>邮箱授权</h2>
+          <button id="syncToggleBtn" class="ghost small sync-toggle" type="button">收起</button>
+          <p class="box-hint">选择邮箱类型，输入账号和授权码后同步邮件。</p>
+          <label>邮箱类型
+            <select id="imapPreset">
+              <option value="imap.qq.com">QQ 邮箱</option>
+              <option value="imap.163.com">163 邮箱</option>
+              <option value="imap.126.com">126 邮箱</option>
+              <option value="imap.gmail.com">Gmail</option>
+              <option value="outlook.office365.com">Outlook / Office 365</option>
+              <option value="custom">自定义 IMAP</option>
+            </select>
+          </label>
+          <label id="customHostLabel" class="hidden">IMAP 服务器
+            <input id="imapHost" placeholder="imap.example.com" />
+          </label>
+          <label>邮箱账号
+            <input id="imapUser" placeholder="name@example.com" autocomplete="username" />
+          </label>
+          <label>授权码
+            <input id="imapPassword" type="password" placeholder="邮箱授权码" autocomplete="current-password" />
+          </label>
+          <div class="sync-time-grid">
+            <label>同步时间
+              <select id="syncRange">
+                <option value="7">最近 7 天</option>
+                <option value="1">今天</option>
+                <option value="3">最近 3 天</option>
+                <option value="30">最近 30 天</option>
+                <option value="custom">自定义范围</option>
+              </select>
+            </label>
+            <label>最多封数
+              <input id="imapLimit" type="number" min="1" max="200" value="50" />
+            </label>
+          </div>
+          <div id="customDateRange" class="sync-time-grid hidden">
+            <label>开始日期
+              <input id="syncSinceDate" type="date" />
+            </label>
+            <label>结束日期
+              <input id="syncUntilDate" type="date" />
+            </label>
+          </div>
+          <button id="syncBtn">同步并运行 Agent</button>
+          <label class="check-line">
+            <input id="rememberAccount" type="checkbox" />
+            记住账号和服务器
+          </label>
+          <label class="check-line">
+            <input id="rememberAuth" type="checkbox" />
+            本机演示模式保存授权码
+          </label>
+          <p class="security-hint">授权码会明文保存在当前浏览器 localStorage，仅建议个人电脑演示时使用。</p>
+          <button id="clearAccountBtn" class="ghost">清除记忆</button>
+          <button id="importBtn" class="ghost">导入样例</button>
+
+          <div class="batch-box">
+            <h3>批量运行 Agent</h3>
+            <label>处理范围
+              <select id="processScope">
+                <option value="unprocessed">只处理未处理邮件</option>
+                <option value="all">重新处理全部邮件</option>
+              </select>
+            </label>
+            <label>最多处理
+              <input id="processLimit" type="number" min="1" max="200" value="50" />
+            </label>
+            <label class="check-line">
+              <input id="batchForceTodo" type="checkbox" />
+              对每封邮件强制生成 Todo
+            </label>
+            <button id="processAllBtn" class="ghost">批量处理</button>
+          </div>
+        </section>
+
+        <section class="test-guide">
+          <h2>测试方式</h2>
+          <ol>
+            <li>同步邮件后，Agent 会自动处理本次同步结果。</li>
+            <li>在下方列表选择邮件。</li>
+            <li>可手动点击“运行 Agent”重新处理单封邮件。</li>
+            <li>查看 Todo 来源、草稿、附件和日志。</li>
+          </ol>
+        </section>
+
+        <div class="mail-list-head">
+          <h2>邮件</h2>
+          <span id="emailCount" class="count">0</span>
+        </div>
+        <div id="emailList" class="mail-list"></div>
+      </aside>
+
+      <main id="mailView" class="mail-reader app-view active">
+        <header class="reader-header">
+          <div id="status" class="status">选择一封邮件开始。</div>
+          <div class="reader-actions">
+            <button id="refreshBtn" class="ghost small">刷新</button>
+            <button id="forceTodoBtn" class="ghost small" disabled>生成 Todo</button>
+            <button id="forceDraftBtn" class="ghost small" disabled>生成草稿</button>
+            <button id="processBtn" disabled>运行 Agent</button>
+          </div>
+        </header>
+
+        <section id="selectedHeader" class="selected-header empty">请选择左侧邮件。</section>
+
+        <nav class="tabs">
+          <button class="tab active" data-tab="mail">邮件原文</button>
+          <button class="tab" data-tab="agent">Agent 结果</button>
+          <button class="tab" data-tab="drafts">回复草稿</button>
+          <button class="tab" data-tab="attachments">附件</button>
+          <button class="tab" data-tab="logs">日志</button>
+        </nav>
+
+        <section class="tab-body">
+          <div id="tab-mail" class="tab-panel active"></div>
+          <div id="tab-agent" class="tab-panel"></div>
+          <div id="tab-drafts" class="tab-panel"></div>
+          <div id="tab-attachments" class="tab-panel"></div>
+          <div id="tab-logs" class="tab-panel"></div>
+        </section>
+      </main>
+
+      <main id="todoView" class="todo-page app-view">
+        <header class="todo-header">
+          <div>
+            <h2>Todo 总览</h2>
+            <p>汇总所有邮件生成的任务，每条任务都保留来源邮件和证据。</p>
+          </div>
+          <div class="todo-actions">
+            <select id="todoPriorityFilter">
+              <option value="all">全部优先级</option>
+              <option value="high">高优先级</option>
+              <option value="medium">中优先级</option>
+              <option value="low">低优先级</option>
+            </select>
+            <button id="todoRefreshBtn" class="ghost">刷新</button>
+          </div>
+        </header>
+        <section class="todo-summary">
+          <button class="summary-card active" data-status="all"><strong id="todoTotal">0</strong><span>全部</span></button>
+          <button class="summary-card" data-status="pending"><strong id="todoPending">0</strong><span>待确认</span></button>
+          <button class="summary-card" data-status="confirmed"><strong id="todoConfirmed">0</strong><span>已确认</span></button>
+          <button class="summary-card" data-status="done"><strong id="todoDone">0</strong><span>已完成</span></button>
+        </section>
+        <section id="todoBoard" class="todo-board"></section>
+      </main>
+    </div>
+
+    <div id="todoModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+      <form id="todoEditForm" class="modal-card">
+        <div class="modal-head">
+          <h2>编辑 Todo</h2>
+          <button type="button" id="todoModalClose" class="ghost small">关闭</button>
+        </div>
+        <input id="editTodoId" type="hidden" />
+        <label>标题
+          <input id="editTodoTitle" required />
+        </label>
+        <label>说明
+          <textarea id="editTodoDescription"></textarea>
+        </label>
+        <div class="form-grid">
+          <label>截止日期
+            <input id="editTodoDeadline" placeholder="例如 2026-06-15 或 待确认" />
+          </label>
+          <label>优先级
+            <select id="editTodoPriority">
+              <option value="high">高</option>
+              <option value="medium">中</option>
+              <option value="low">低</option>
+            </select>
+          </label>
+          <label>状态
+            <select id="editTodoStatus">
+              <option value="pending">待确认</option>
+              <option value="confirmed">已确认</option>
+              <option value="done">已完成</option>
+              <option value="rejected">已拒绝</option>
+            </select>
+          </label>
+        </div>
+        <label>证据
+          <textarea id="editTodoEvidence"></textarea>
+        </label>
+        <div class="actions right">
+          <button type="submit">保存</button>
+          <button type="button" id="todoModalCancel" class="ghost">取消</button>
+        </div>
+      </form>
+    </div>
+
+    <script src="/static/app.js?v=20260611-layout"></script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+[
+  {
+    "message_id": "sample-001",
+    "subject": "【任务】请在本周五前提交智能邮箱 Agent 开题报告终稿",
+    "sender": "课程助教 <ta@example.edu>",
+    "received_at": "2026-06-10 09:20:00",
+    "body": "各位同学好，请在本周五前提交智能邮箱 Agent 项目的开题报告终稿。报告需要包含项目背景、敏捷计划、Agent 架构、风险清单和验收标准。请确认收到，并在提交后回复邮件说明完成情况。",
+    "source": "sample",
+    "attachments": []
+  },
+  {
+    "message_id": "sample-002",
+    "subject": "项目任务表附件，请根据表格推进本周工作",
+    "sender": "项目负责人 <pm@example.com>",
+    "received_at": "2026-06-10 10:05:00",
+    "body": "团队好，附件里是本周项目任务表，请各位根据 owner 和 deadline 推进。高优先级任务请优先完成，明天下班前同步一次进展。",
+    "source": "sample",
+    "attachments": [
+      {
+        "filename": "project_tasks.csv",
+        "path": "project_tasks.csv",
+        "file_type": "csv"
+      }
+    ]
+  },
+  {
+    "message_id": "sample-003",
+    "subject": "周四下午项目评审会议通知",
+    "sender": "产品老师 <teacher@example.edu>",
+    "received_at": "2026-06-10 11:30:00",
+    "body": "本周四下午 3 点进行项目评审会议，请准备 5 分钟演示，重点说明敏捷过程文件、Agent 工作流和当前可运行功能。如无法参加请提前回复确认。",
+    "source": "sample",
+    "attachments": []
+  },
+  {
+    "message_id": "sample-004",
+    "subject": "请确认是否可以支持附件分析功能",
+    "sender": "用户代表 <client@example.com>",
+    "received_at": "2026-06-10 13:10:00",
+    "body": "你好，我们希望系统不仅能读邮件，还可以分析 Excel 或 CSV 附件，并自动把表格中的任务转成 Todo。请回复确认 MVP 阶段能否支持这个能力，以及大概什么时候可以演示。",
+    "source": "sample",
+    "attachments": []
+  },
+  {
+    "message_id": "sample-005",
+    "subject": "课程订阅简报：软件工程每周资讯",
+    "sender": "newsletter@example.com",
+    "received_at": "2026-06-10 08:10:00",
+    "body": "这是本周软件工程领域资讯简报，包含若干行业新闻和文章推荐。本邮件无需回复。",
+    "source": "sample",
+    "attachments": []
+  }
+]
+

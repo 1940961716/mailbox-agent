@@ -1,0 +1,2 @@
+"""Mailbox Agent backend package."""
+

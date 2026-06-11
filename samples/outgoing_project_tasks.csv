@@ -1,0 +1,6 @@
+task,owner,deadline,priority
+完成真实邮箱 IMAP 同步测试,后端开发,2026-06-12,high
+验证 Agent 是否生成 Todo 来源证据,AI 工程师,2026-06-12,high
+完善回复草稿的人机确认流程,前端开发,2026-06-13,medium
+整理敏捷过程文件并补充验收截图,项目负责人,2026-06-14,medium
+
